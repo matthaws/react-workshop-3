@@ -5,22 +5,20 @@ import "./fragments.css";
 const FragmentDemo = () => {
   return (
     <article className="parent-element">
-      <FlexedChildren number={4} />
+      <FlexedChildren />
     </article>
   );
 };
 
-const FlexedChildren = ({ number }) => {
-  const divs = [];
-  for (let i = 0; i < number; i++) {
-    divs.push(<div className="circle" />);
-  }
-
-  return <React.Fragment>{divs}</React.Fragment>;
-};
-
-FlexedChildren.propTypes = {
-  number: PropTypes.number
+const FlexedChildren = () => {
+  return (
+    <React.Fragment>
+      <div className="circle" />
+      <div className="circle" />
+      <div className="circle" />
+      <div className="circle" />
+    </React.Fragment>
+  );
 };
 
 export default FragmentDemo;

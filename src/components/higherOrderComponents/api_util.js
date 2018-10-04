@@ -1,18 +1,27 @@
 // "Accept", "application/json"
 // "https://icanhazdadjoke.com/"
 
-const fetchJoke = async () => {
+export const fetchJoke = () => {
   const headers = new Headers();
   headers.append("Accept", "application/json");
 
-  const response = await fetch("https://icanhazdadjoke.com/", {
+  return fetch("https://icanhazdadjoke.com/", {
     method: "GET",
     headers
-  });
-
-  const payload = await response.json();
-
-  return payload;
+  }).then(response => response.json());
 };
+
+// const fetchJoke = async () => {
+//   const headers = new Headers();
+//   headers.append("Accept", "application/json");
+//
+//   const response = await fetch("https://icanhazdadjoke.com/", {
+//     method: "GET",
+//     headers
+//   });
+//
+//   return await response.json();
+//
+// };
 
 export default fetchJoke;

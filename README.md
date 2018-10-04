@@ -1,38 +1,25 @@
-# React: Beyond the Basics
+# React Workshop 10/5/2018
 
-App Academy Job Seeker Technical Workshop 4/26/18
+## Learning Goals
 
-### Learning Goals
+Coming out of bootcamp, what you've done so far with React is just the tip of the proverbial iceberg of everything you can and should know about this still-super-popular framework. We'll cover tools and practices for React development ranging from "nice to know" all the way to "you really should be using this ASAP".
 
-Graduates of the aA curriculum have a solid foundational understanding of the React framework. However, there is not time in the course to cover many of its features or some common design patterns used in React development. In this workshop, we will be exploring and demoing the following React features:
+We'll talk about and demo:
 
-* type checking with propTypes & using default props
-* interacting with the native DOM via refs
-* controlled vs uncontrolled components
-* Fragments
+### React features
+  * PropTypes & defaultProps
+  * Fragment
 
-We will also look at some common React design patterns including:
+### Design Patterns
+  * Higher Order Components
+  * Render Props
 
-* Higher Order Components
+### Utilities
+  * create-react-app
+  * transform-class-properties babel plugin
+  * STORYBOOK!
 
-Along the way we'll brush up against some ES7+ JavaScript syntax and web APIs with which you may be unfamiliar:
-
-* Async / Await syntax for Promises
-* Object Rest/Spread Properties
-* Fetch for making AJAX requests (rather than JQuery's `$.ajax()`)
-
-### Next Lecture
-
-On May 10, we'll have React: Beyond the Basics THE SEQUEL, where we'll cover:
-
-* render props
-* compound components
-* the context API
-* the suspense API (maybe)
-
-### Demos
-
-* [PropTypes && default props](src/components/propTypes)
-* [Refs](src/components/refs)
-* [Fragments](src/components/fragments)
-* [Higher Order Components](src/components/higherOrderComponents)
+### Cool Javascript Stuff
+  * fetch
+  * async/await
+  * object spread/rest

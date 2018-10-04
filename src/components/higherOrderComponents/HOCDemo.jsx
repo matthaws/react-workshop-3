@@ -1,29 +1,36 @@
-import React, { Component } from "react";
-import compose from "lodash/fp/compose";
-import withLoader from "./withLoader.jsx";
-import withLogger from "./withLogger.jsx";
-import JokeReader from "./JokeReader.jsx";
+import React, { Component, Fragment } from "react";
+import PropTypes from "prop-types";
 import fetchJoke from "./api_util";
+import "./HOC.css";
 
-const HOCDemo = () => {
-  const doAThing = () => {
-    console.log("Did a thing!");
-  };
-  const JokeWithLoader = compose(withLogger, withLoader)(JokeReader);
+const HOCDemo = () => (
+  <WithLoader asyncCall={fetchJoke}>{({ joke }) => <h1>{joke}</h1>}</WithLoader>
+);
 
-  return <JokeWithLoader asyncCall={fetchJoke} />;
+const Button = ({ children, ...props }) => (
+  <button {...props} className="button">
+    {children}
+  </button>
+);
+
+Button.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
-const withButton = customOnClick => {
-  return class Button extends Component {
-    render() {
-      return (
-        <button onClick={customOnClick} className="button">
-          {this.props.children}
-        </button>
-      );
-    }
-  };
-};
+class WithLoader extends Component {
+  state = { isLoaded: false, payload: null };
+
+  componentDidMount() {
+    this.props
+      .asyncCall()
+      .then(payload => this.setState({ payload, isLoaded: true }));
+  }
+
+  render() {
+    const { isLoaded, payload } = this.state;
+    const { children } = this.props;
+    return isLoaded ? children(payload) : <div className="spinner" />;
+  }
+}
 
 export default HOCDemo;
