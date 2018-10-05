@@ -7,8 +7,8 @@ import "./App.css";
 class App extends Component {
   render() {
     return (
-      <main className="App">
-        <HOCDemo />
+      <main className="welcome">
+        <h1>Over-"React"-ing</h1>
       </main>
     );
   }
