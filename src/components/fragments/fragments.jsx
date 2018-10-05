@@ -12,12 +12,12 @@ const FragmentDemo = () => {
 
 const FlexedChildren = () => {
   return (
-    <React.Fragment>
+    <div>
       <div className="circle" />
       <div className="circle" />
       <div className="circle" />
       <div className="circle" />
-    </React.Fragment>
+    </div>
   );
 };
 

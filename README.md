@@ -1,3 +1,5 @@
+# Over-"React"-ing
+
 # React Workshop 10/5/2018
 
 ## Learning Goals
@@ -7,19 +9,23 @@ Coming out of bootcamp, what you've done so far with React is just the tip of th
 We'll talk about and demo:
 
 ### React features
-  * PropTypes & defaultProps
-  * Fragment
+
+- PropTypes & defaultProps
+- Fragment
 
 ### Design Patterns
-  * Higher Order Components
-  * Render Props
+
+- Higher Order Components
+- Render Props
 
 ### Utilities
-  * create-react-app
-  * transform-class-properties babel plugin
-  * STORYBOOK!
+
+- create-react-app
+- transform-class-properties babel plugin
+- STORYBOOK!
 
 ### Cool Javascript Stuff
-  * fetch
-  * async/await
-  * object spread/rest
+
+- fetch
+- async/await
+- object spread/rest
