@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 
+// The classic way of doing forms in React!
+
 class LoginForm extends Component {
   constructor(props) {
     super(props);

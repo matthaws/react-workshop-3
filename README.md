@@ -10,22 +10,21 @@ We'll talk about and demo:
 
 ### React features
 
-- PropTypes & defaultProps
-- Fragment
+- [PropTypes & defaultProps](src/components/propTypes)
+- [Fragment](src/components/fragments)
 
 ### Design Patterns
 
-- Higher Order Components
-- Render Props
+- [Higher Order Components and Render Props](src/components/higherOrderComponents)
 
-### Utilities
+### Utilities to read about!
 
 - create-react-app
 - transform-class-properties babel plugin
-- STORYBOOK!
+- STORYBOOK! https://github.com/storybooks/storybook
 
-### Cool Javascript Stuff
+### Javascript stuff to read about!
 
-- fetch
-- async/await
-- object spread/rest
+- Fetch (instead of `$.ajax`, native way to make AJAX calls)
+- Async/await syntax (a huge improvement from `.then` syntax for Promises)
+- Object rest and spread operator (...)

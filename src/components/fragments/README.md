@@ -25,12 +25,13 @@ return (
 But what if you _really_ wanted that ul to be in the parent component? What if you _really really_ want a React component to return siblings that are NOT wrapped in one parent component? Turns out plenty of developers wanted exactly that, and its now supported via the use of React Fragments.
 
 ```javascript
+import { Fragment } from "react";
 return (
-  <React.Fragment>
+  <Fragment>
     <li> 1 </li>
     <li> 2 </li>
     <li> 3 </li>
-  </React.Fragment>
+  </Fragment>
 );
 ```
 

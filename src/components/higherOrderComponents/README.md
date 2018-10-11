@@ -5,21 +5,20 @@ A Higher Order Component is simply a component that renders another component. Y
 Here's a very simple example to start. Let's make a custom Button component that we can use whenever we want a `<button>` element - this is an easy way to ensure that all our buttons have uniform behavior and styling:
 
 ```javascript
-class Button extends Component {
-  onClick = e => {
-    e.preventDefault();
-    this.props.onClick();
-  };
+const Button = (
+  { children, ...otherProps } // We use destructing to grab ALL other values from props besides children
+) => (
+  <button {...otherProps} className="button">
+    {children}
+  </button>
+);
 
-  render() {
-    return (
-      <button className="styled-button" onClick={this.onClick}>
-        {this.props.children}
-      </button>
-    );
-  }
-}
+Button.propTypes = {
+  children: PropTypes.node.isRequired
+};
 ```
+
+The 'children' property in props refers to everything in between the opening and closing of this element where it is being rendered. We'll see that in use below:
 
 Now we can easily use this component to make buttons out of HTML elements or even other components!
 
@@ -27,81 +26,170 @@ Now we can easily use this component to make buttons out of HTML elements or eve
   render() {
     return (
       <main>
-        <Button onClick={this.handleButton}>
-          <h1>This is going to be a big button!</h1>
-          <ButtonTextComponent / >
+        <Button onClick={this.handleButton}>  // onClick will be one of those 'otherProps' we grab above
+          <h1>This is going to be a big button!</h1>  
         </Button>
       </main>
     )
   }
 ```
 
-Another common pattern is to make use of a function and closure to return a new component. Let's say for example we wanted to create a reusable HOC that will allow us to log to the console all of the props that its child component is receiving, useful for debugging.
+The h1 is the child of the Button here, so that's what will get rendered where we put `{children}` above.
+
+Here's a utility function that invokes an asynchronous API call, renders a spinner until its resolves, and then renders its children, giving the children whatever payload of data was returned.
 
 ```javascript
-const withLogger = ConnectedComponent => {
-  return props => {
-    console.log(props);
-    return <ConnectedComponent {...props} />;
-  };
-};
+class WithLoader extends Component {
+  state = { isLoaded: false, payload: null };
 
-const ComponentWithLogger = withLogger(DemoComponent);
+  componentDidMount() {
+    this.props
+      .asyncCall()
+      .then(payload => this.setState({ payload, isLoaded: true }));
+  }
+
+  render() {
+    const { isLoaded, payload } = this.state;
+    const { children } = this.props;
+    return isLoaded ? children(payload) : <div className="spinner" />;
+  }
+}
 ```
 
-`ComponentWithLogger` is now a wrapped version of `DemoComponent` that will log its props to the console on each render.
-
-Here's a slightly more complicated example. Let's make a reusable Loader component that will display a spinner until an asynchronous API call is returned. There are a lot of libraries and patterns out there that make these kind of DataFetcher or Loader components really efficiently and with robust options, but lets make a very simple example of our own:
+Here, we are going to assume the direct child of this component will not be a React component or JSX, but a Javascript function. That's why we are invoking children on the last line of the render and passing in the payload as an argument. If we set up the child function right, this will be an easy way for this child to
+receive the day from the higher order component:
 
 ```javascript
-const withLoader = ChildComponent => {
-  return class Loader extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { isLoaded: false, payload: null };
-    }
+const HOCDemo = () => (
+  <WithLoader asyncCall={fetchJoke}>
+    {payload => <h1>{payload.joke}</h1>}
+  </WithLoader>
+);
+```
 
-    componentDidMount() {
-      this.props
-        .asyncCall()
-        .then(payload => this.setState({ isLoaded: true, payload }));
-    }
+We made the direct child of WithLoader a function that expected payload, then we could use that to return some JSX to be rendered to the DOM.
 
-    // ES7 async/await syntax which can replace .then syntax for promises.
-    repeatAsyncCall = async e => {
-      const payload = await this.props.asyncCall();
-      this.setState({ payload });
+Let's take this even further! Here's the old-school way of doing a React form (full code in OldStyleForms.js in this folder).
+
+```javascript
+class LoginForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { username: "", password: "" };
+    this.update = this.update.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.props.someThunkAction(state);
+  }
+
+  update(field) {
+    return e => {
+      this.setState({ [field]: e.target.value });
     };
+  }
 
-    render() {
-      // ES7 syntax, we destructure asyncCall out of the props and then use ... to indicate that everything else in the props object be pulled out into a new object called otherProps.
-      const { asyncCall, ...otherProps } = this.props;
-
-      if (this.state.isLoaded) {
-        return (
-          <ChildComponent
-            //spread the key/value pairs from otherProps so that each becomes a prop to ChildComponent
-            {...otherProps}
-            repeatAsyncCall={this.repeatAsyncCall}
-            payload={this.state.payload}
+  render() {
+    return (
+      <div>
+        <h1>Login</h1>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            value={this.state.username}
+            onChange={this.update("username")}
           />
-        );
-      } else {
-        return <div className="spinner" />;
-      }
-    }
+          <input
+            type="password"
+            value={this.state.password}
+            onChange={this.update("password")}
+          />
+        </form>
+      </div>
+    );
+  }
+}
+```
+
+There's a lot of redundant code here, especially since you repeat a lot of this for every form in your app.
+
+You COULD make a resuable higher order form component that looks like this, applying the HOC ideas we've looked at in the Button and WithLoader examples.
+
+```js
+export default class Form extends Component {
+  // using transform-class-property babel plugin that comes native with create-react-app
+  // this syntax will autmoatically create, essentially, this.state, this.update, and this.value.
+  // Because the last two are fat-arrow functions, this means they will
+  // naturally keep the context of 'this' inside them, and there's no need to bind in the
+  // constructor!
+  state = this.props.initialState;
+  update = field => e => this.setState({ [field]: e.target.value });
+  value = field => this.state[field];
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.handleSubmit(this.state);
   };
+
+  render() {
+    const { children, title } = this.props;
+    return (
+      <Fragment>
+        <h1>{title}</h1>
+        <form onSubmit={this.handleSubmit}>{children(update, value)}</form>
+      </Fragment>
+    );
+  }
+}
+
+Form.propTypes = {
+  initialState: PropTypes.obj,
+  children: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired
+};
+
+Form.defaultValues = {
+  initialState: {}
 };
 ```
 
-Now by calling `withLoader(DemoComponent)` we get back a wrapped version of `DemoComponent` that expects an `asyncCall` prop, will call that prop on mounting and initially render a spinner. When the async call comes back, it will render the wrapped component instead, passing down any props intended for that component along with a `payload` which is the returned data from the API.
+We could reuse this component easily for different forms:
 
-The real power of having these utility higher order components is that we can pick and choose between them. A powerful, functional-programming way of doing this is using `compose`, a powerful function you can get from a library like Lodash or write yourself if you are feeling up to a challenge. Compose takes as an argument any number of functions that you want. It runs those functions in order, passing in the return value from each function as an argument to the next one. This all returns a function that just needs the arguments for the first function in the composed chain in order to get started. Its a cool way to chain up functions! Here's an example:
+```js
+const LoginForm = () => {
+  return (
+    <Form
+      title={"LOGIN!"}
+      handleSubmit={someThunkAction}
+      initialState={{ username: "", password: "" }}
+    >
+      {(update, value) => (
+        <Fragment>
+          <input
+            type="text"
+            value={value("username")}
+            onChange={update("username")}
+          />
+          <input
+            type="password"
+            value={value("pasword")}
+            onChange={update("password")}
+          />\
+        </Fragment>
+      )}
+    </Form>
+  );
+};
 
-```javascript
-const CoolComponent = compose(withLogger, withLoader)(DemoComponent);
+const PostForm = () => (
+  <Form handleSubmit={someThunkAction} initialState={{ title: "", body: "" }}>
+    {(update, value) => (
+      <form onSubmit={handleSubmit(values())}>
+        <input type="text" onChange={update("title")} value={value("title")} />
+        <textarea onChange={update("body")}>{value("body")}</textarea>
+      </form>
+    )}
+  </Form>
+);
 ```
-
-Now we have a component wrapped with both a Logger and a Loader! As you can imagine, now we can easily customize all our app's components with utility HOCs.
-
-This is just scratching the surface, but as you can see higher order components can be very powerful!

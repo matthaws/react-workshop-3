@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import "./fragments.css";
 
@@ -12,12 +12,12 @@ const FragmentDemo = () => {
 
 const FlexedChildren = () => {
   return (
-    <div>
+    <Fragment>
       <div className="circle" />
       <div className="circle" />
       <div className="circle" />
       <div className="circle" />
-    </div>
+    </Fragment>
   );
 };
 

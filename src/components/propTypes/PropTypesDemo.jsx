@@ -13,4 +13,23 @@ const PropTypesDemo = ({ string, number, component: Component, func, isOn }) =>
     </Fragment>
   ) : null;
 
+class DemoClass extends Component {
+  static propTypes = {};
+}
+
+DemoClass.propTypes = {};
+
+PropTypesDemo.propTypes = {
+  string: PropTypes.string.isRequired,
+  number: PropTypes.number,
+  func: PropTypes.func,
+  isOn: PropTypes.bool,
+  component: PropTypes.node
+};
+
+PropTypesDemo.defaultProps = {
+  number: 5,
+  isOn: true
+};
+
 export default PropTypesDemo;
